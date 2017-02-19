@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- status="debug" 可以查看log4j的装配过程-->
+<!-- status="OFF"，可以去掉，它的含义为是否记录log4j2本身的event信息，默认是OFF -->
+<Configuration status="off" monitorInterval="1800">
+    <properties>
+        <property name="LOG_HOME">logs</property>
+        <property name="FILE_NAME">logtest-log</property>
+    </properties>
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <ThresholdFilter level="info" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} %L - %msg%n" />
+        </Console>
+        <RollingRandomAccessFile name="spartajet-info" fileName="${LOG_HOME}/${FILE_NAME}-info.log" filePattern="${LOG_HOME}/$${date:yyyy-MM}/${FILE_NAME}-%d{yyyy-MM-dd}-%i.log.gz">
+            <Filters>
+                <ThresholdFilter level="warn" onMatch="DENY"  onMismatch="NEUTRAL"/>
+                <ThresholdFilter level="info" onMatch="ACCEPT" onMismatch="DENY"/>
+            </Filters>
+            
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} %L - %msg%n" />
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1"  />
+                <SizeBasedTriggeringPolicy size="10 MB" />
+            </Policies>
+            <DefaultRolloverStrategy max="20" />
+        </RollingRandomAccessFile>
+        <RollingRandomAccessFile name="spartajet-error" fileName="${LOG_HOME}/${FILE_NAME}-error.log" filePattern="${LOG_HOME}/$${date:yyyy-MM}/${FILE_NAME}-%d{yyyy-MM-dd}-%i.log.gz" append="false">
+            <Filters>
+                <ThresholdFilter level="error" onMatch="ACCEPT" onMismatch="DENY"/>
+            </Filters>
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} %L - %msg%n" />
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1"  />
+                <SizeBasedTriggeringPolicy size="10 MB" />
+            </Policies>
+            <DefaultRolloverStrategy max="20" />
+        </RollingRandomAccessFile>
+        <RollingRandomAccessFile name="spring-info" fileName="${LOG_HOME}/spring-info.log" filePattern="${LOG_HOME}/$${date:yyyy-MM}/${FILE_NAME}-%d{yyyy-MM-dd}-%i.log.gz" append="false">
+            <Filters>
+                <ThresholdFilter level="info" onMatch="ACCEPT" onMismatch="DENY"/>
+            </Filters>
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} %L - %msg%n" />
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1"  />
+                <SizeBasedTriggeringPolicy size="10 MB" />
+            </Policies>
+            <DefaultRolloverStrategy max="20" />
+        </RollingRandomAccessFile>
+        
+    </Appenders>
+    <Loggers>
+        <Logger name="com.spartajet.logtest" level="info" additivity="false">
+            <AppenderRef ref="Console"  />
+            <AppenderRef ref="spartajet-info" />
+            <AppenderRef ref="spartajet-error"/>
+        </Logger>
+        <Logger name="org.springframework" level="info" additivity="false">
+            <AppenderRef ref="spring-info"/>
+        </Logger>
+        
+    </Loggers>
+</Configuration>
